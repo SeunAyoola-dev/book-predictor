@@ -14,27 +14,22 @@ function isSupportedUrl(url){
 }
 
 async function sendMessageToActiveTab(message) {
-    console.log("Sending message:")
     const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
     if (!tab || !isSupportedUrl(tab.url)) {
-        setContent("Not on Amazon");
+        setContent("This plugin only works on Amazon books. (For now...)");
         return  null
     }
 
     try {
         console.log("Sending message to tab:", tab.id)
         const response = await chrome.tabs.sendMessage(tab.id, message);
-        if (response.parsedNumberOfPages >= 500) {
-            setContent("20% Likelihood of Completion")
-        } else {
-            setContent(`60% Likelihood of Completion`)
-        }
+        const chanceOfCompletion = 20 ? response.parsedNumberOfPages >= 500: 60;
+        setContent(`Likelihood of Completion: ${chanceOfCompletion}%`)
     } catch (e) {
         console.error("Failed to reach content script:", e)
         setContent("Couldn't reach the page. Reload tab and try again")
         return null;
     }
-
 }
 
 sendMessageToActiveTab({type: 'scrapeBookData'})
