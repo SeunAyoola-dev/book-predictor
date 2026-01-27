@@ -1,0 +1,14 @@
+body {
+    font-family: sans-serif;
+    width: 250px;
+    padding: 10px;
+}
+
+h3 {
+    margin-top: 0;
+}
+
+#content {
+    font-size: 14px;
+    line-height: 1.4;
+}
