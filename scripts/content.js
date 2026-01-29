@@ -1,26 +1,36 @@
-function scrapeBookData(article) {
-    console.log("Scraping book data")
-    if (!article) return null;
+function getText(root, selector) {
+    const el = root.querySelector(selector);
+    return el ? el.innerText.trim() : null;
+}
 
-    const getText = (selector) => {
-        const el = article.querySelector(selector);
-        return el ? el.innerText.trim() : null;
-    }
-    // Book details
-    const title = getText('#productTitle') //id
-    let author = null;
+function parseNumberOfPages(text) {
+    if (!text) return null;
+    const parsed = parseInt(text, 10);
+    return Number.isNaN(parsed) ? null: parsed;
+}
+
+function getAuthor(root) {
     const authorSelectors = [
         ".author a.a-link-normal",
         "#bylineInfo a",
         ".contributorNameID"
     ]
     for (const selector of authorSelectors) {
-        author = getText(selector)
-        if (author) break;
+        const author = getText(root, selector)
+        if (author) return author;
     }
-    const rating = getText('.a-icon-alt') || getText("span[data-hook='rating-out-of-text']")
-    const numberOfPages = getText('.rpi-attribute-value span')
-    const parsedNumberOfPages = parseInt(numberOfPages, 10) ? parseInt(numberOfPages, 10) : null
+    return null;
+}
+function scrapeBookData(article) {
+    console.log("Scraping book data")
+    if (!article) return null;
+
+    // Book details
+    const title = getText(article, '#productTitle')
+    const author = getAuthor(article)
+    const rating = getText(article, '.a-icon-alt') || getText(article, "span[data-hook='rating-out-of-text']")
+    const numberOfPages = getText(article, '.rpi-attribute-value span')
+    const parsedNumberOfPages = parseNumberOfPages(numberOfPages)
 
     return {title, author, rating, parsedNumberOfPages}
 }
