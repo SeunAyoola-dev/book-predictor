@@ -23,7 +23,8 @@ async function sendMessageToActiveTab(message) {
     try {
         console.log("Sending message to tab:", tab.id)
         const response = await chrome.tabs.sendMessage(tab.id, message);
-        const chanceOfCompletion = 20 ? response.parsedNumberOfPages >= 500: 60;
+        console.log("Received response:", response)
+        const chanceOfCompletion = response.parsedNumberOfPages >= 500 ? 20 : 60;
         setContent(`Likelihood of Completion: ${chanceOfCompletion}%`)
     } catch (e) {
         console.error("Failed to reach content script:", e)
