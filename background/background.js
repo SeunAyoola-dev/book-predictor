@@ -2,13 +2,29 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'bookDetected') {
         handleBookDetected(msg.payload)
     }
-})
-
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'addManualBook') {
         addManualBook(msg.payload)
     }
 })
+
+async function sendBackendBookRequest(book) {
+    try {
+        const { readingHistory = []} =
+            await chrome.storage.local.get(['readingHistory'])
+        const response = await fetch('http://localhost:8080/book', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                book,
+                readingHistory
+            })
+        })
+        return response.json()
+    } catch (e) {
+        console.error('Failed to reach backend:', e)
+        return null
+    }
+}
 
 function handleBookDetected(book) {
     console.log('Book detected:', book)
@@ -21,7 +37,8 @@ function handleBookDetected(book) {
         .catch((error) => {
             console.error('Error storing book data:', error);
         });
-    // TODO: send to backend
+
+    sendBackendBookRequest(book)
 }
 
 function addManualBook(book) {
