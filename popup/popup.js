@@ -22,7 +22,7 @@ function setContent(text) {
 function isSupportedUrl(url){
     try {
         const u = new URL(url);
-        return u.protocol === 'https:' && u.hostname === 'www.amazon.com';
+        return u.protocol === 'https:' && u.hostname.startsWith('www.amazon.');
     } catch {
         return false
     }

@@ -22,7 +22,10 @@
     "storage"
   ],
   "host_permissions": [
-    "https://www.amazon.com/*"
+    "https://www.amazon.com/*",
+    "https://www.amazon.co.uk/*",
+    "https://www.amazon.ca/*",
+    "https://www.amazon.com.au/*"
   ],
   "content_scripts": [
     {
@@ -31,7 +34,10 @@
         "scripts/content.js"
       ],
       "matches": [
-        "https://www.amazon.com/*"
+        "https://www.amazon.com/*",
+        "https://www.amazon.co.uk/*",
+        "https://www.amazon.ca/*",
+        "https://www.amazon.com.au/*"
       ]
     }
   ]
