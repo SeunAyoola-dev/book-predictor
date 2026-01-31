@@ -13,7 +13,7 @@ def returnPrediction(payload: BookPayload):
     book = payload.book
     readingHistory = payload.readingHistory
 
-    score = 0.6 if book.get("parsedNumberOfPages") > 500 else 0.2
+    score = 60 if book.get("parsedNumberOfPages") > 500 else 20
 
     return {
         "score": score,

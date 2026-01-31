@@ -1,11 +1,36 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'bookDetected') {
-        handleBookDetected(msg.payload)
+        handleBookDetected(msg.payload).then(sendResponse);
+        return true;
     }
     if (msg.type === 'addManualBook') {
-        addManualBook(msg.payload)
+        handleAddManualBook(msg.payload).then(sendResponse);
+        return true;
     }
 })
+
+async function handleAddManualBook(book) {
+    console.log('Adding manual book:', book)
+
+    await new Promise((resolve) => {
+        chrome.storage.local.get(['readingHistory'], (result) => {
+            let books = result.readingHistory || [];
+            books.push({
+                ...book,
+                timestamp: Date.now(),
+                id: crypto.randomUUID()
+            });
+            chrome.storage.local.set({ readingHistory: books }, () => {
+                console.log('Book added successfully');
+                resolve();
+            });
+        });
+    });
+
+    const response = await sendBackendBookRequest(book);
+    const { score, explanation } = response || {};
+    return { score, explanation };
+}
 
 async function sendBackendBookRequest(book) {
     try {
@@ -26,7 +51,7 @@ async function sendBackendBookRequest(book) {
     }
 }
 
-function handleBookDetected(book) {
+async function handleBookDetected(book) {
     console.log('Book detected:', book)
 
     // store the latest detected book
@@ -38,22 +63,9 @@ function handleBookDetected(book) {
             console.error('Error storing book data:', error);
         });
 
-    sendBackendBookRequest(book)
-}
+    const response = await sendBackendBookRequest(book)
 
-function addManualBook(book) {
-    console.log('Adding manual book:', book)
-
-    chrome.storage.local.get(['readingHistory'], (result) => {
-        let books = result.readingHistory || [];
-        books.push({
-            ...book,
-            timestamp: Date.now(),
-            id: crypto.randomUUID()
-            }
-        );
-        chrome.storage.local.set({ readingHistory: books }, () => {
-            console.log('Book added successfully');
-        });
-    });
+    const {score, explanation} = response || {};
+    console.log('Backend response:', score)
+    return {score, explanation};
 }
