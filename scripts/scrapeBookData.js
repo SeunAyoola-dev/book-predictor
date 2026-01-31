@@ -21,6 +21,7 @@ function getAuthor(root) {
     }
     return null;
 }
+
 function scrapeBookData(article) {
     console.log("Scraping book data")
     if (!article) return null;
@@ -31,6 +32,7 @@ function scrapeBookData(article) {
     const rating = getText(article, '.a-icon-alt') || getText(article, "span[data-hook='rating-out-of-text']")
     const numberOfPages = getText(article, '.rpi-attribute-value span')
     const parsedNumberOfPages = parseNumberOfPages(numberOfPages)
+    const description = getText(article, "#bookDescription_feature_div .a-expander-content").replace(/\W/g, '')
 
-    return {title, author, rating, parsedNumberOfPages}
+    return {title, author, rating, parsedNumberOfPages, description}
 }
