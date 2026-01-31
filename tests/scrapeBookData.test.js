@@ -13,24 +13,20 @@ describe('scrapeBookData.js', () => {
     let getText, parseNumberOfPages, getAuthor, scrapeBookData;
 
     beforeEach(() => {
-        dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+        dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', { runScripts: "dangerously" });
         window = dom.window;
         document = window.document;
 
-        // Use Function constructor to evaluate the script content in a way that captures the functions
-        // Since they are top-level functions in the script, evaluating it will define them in the global scope of the Function's context
-        const context = {};
-        const script = new window.Function('context', scriptContent + `
-            context.getText = getText;
-            context.parseNumberOfPages = parseNumberOfPages;
-            context.getAuthor = getAuthor;
-            context.scrapeBookData = scrapeBookData;
-        `);
-        script(context);
-        getText = context.getText;
-        parseNumberOfPages = context.parseNumberOfPages;
-        getAuthor = context.getAuthor;
-        scrapeBookData = context.scrapeBookData;
+        // Execute the script content in the JSDOM window
+        const scriptEl = document.createElement("script");
+        scriptEl.textContent = scriptContent;
+        document.body.appendChild(scriptEl);
+
+        // Access functions from the window object
+        getText = window.getText;
+        parseNumberOfPages = window.parseNumberOfPages;
+        getAuthor = window.getAuthor;
+        scrapeBookData = window.scrapeBookData;
     });
 
     describe('getText', () => {

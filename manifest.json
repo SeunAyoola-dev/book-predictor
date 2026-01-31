@@ -3,6 +3,10 @@
   "name": "Will I Finish It?",
   "version": "1.0",
   "description": "A Chrome extension that predicts whether you'll finish a book",
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
@@ -14,7 +18,8 @@
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
     "https://www.amazon.com/*"
