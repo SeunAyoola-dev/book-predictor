@@ -1,7 +1,7 @@
 const contentEl = document.getElementById("content");
 const form = document.getElementById("manual-form");
 
-form?.addEventListener("submit", (e) => {
+form?.addEventListener("submit", async (e) => {
     e.preventDefault() // prevents the popup from reloading when submitting a form
 
     const book = {
@@ -12,7 +12,13 @@ form?.addEventListener("submit", (e) => {
         numberOfPages: document.getElementById("numberOfPages").value
     }
 
-    chrome.runtime.sendMessage({type: 'addManualBook', payload: book})
+    setContent("Calculating score...");
+    const response = await chrome.runtime.sendMessage({type: 'addManualBook', payload: book})
+    if (response && response.score !== undefined) {
+        setContent(`Likelihood of Completion: ${response.score}%`)
+    } else {
+        setContent("Book added successfully.");
+    }
 })
 
 function setContent(text) {
@@ -39,8 +45,12 @@ async function sendMessageToActiveTab(message) {
         console.log("Sending message to tab:", tab.id)
         const response = await chrome.tabs.sendMessage(tab.id, message);
         console.log("Received response:", response)
-        const chanceOfCompletion = response.parsedNumberOfPages >= 500 ? 20 : 60;
-        setContent(`Likelihood of Completion: ${chanceOfCompletion}%`)
+        if (response && response.score !== undefined) {
+            const {score} = response;
+            setContent(`Likelihood of Completion: ${score}%`)
+        } else {
+            setContent("Could not retrieve score.")
+        }
     } catch (e) {
         console.error("Failed to reach content script:", e)
         setContent("Couldn't reach the page. Reload tab and try again")
