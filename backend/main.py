@@ -9,9 +9,9 @@ class BookPayload(BaseModel):
     readingHistory: List[Dict]
 
 @app.post("/book")
-def returnPrediction(payload: BookPayload):
+def return_prediction(payload: BookPayload):
     book = payload.book
-    readingHistory = payload.readingHistory
+    reading_history = payload.readingHistory
 
     score = 60 if book.get("parsedNumberOfPages") > 500 else 20
 
