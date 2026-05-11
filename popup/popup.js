@@ -1,15 +1,15 @@
 const contentEl = document.getElementById("content");
 const form = document.getElementById("manual-form");
 
-form?.addEventListener("submit", async (e) => {
-    e.preventDefault() // prevents the popup from reloading when submitting a form
+const submitBtn = document.getElementById("m-submit");
 
+submitBtn?.addEventListener("click", async () => {
     const book = {
-        title: document.getElementById("title").value,
-        author: document.getElementById("author").value,
-        genre: document.getElementById("genre").value,
-        rating: document.getElementById("rating").value,
-        numberOfPages: document.getElementById("numberOfPages").value
+        title: document.getElementById("m-title").value,
+        author: document.getElementById("m-author").value,
+        genre: document.getElementById("m-genre").value,
+        rating: document.getElementById("m-rating").value,
+        numberOfPages: document.getElementById("m-pages").value
     }
 
     setContent("Calculating score...");
