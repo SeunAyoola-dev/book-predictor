@@ -28,6 +28,13 @@
     <div class="input-group">
         <input id="m-genre"  placeholder="Genre"       required />
     </div>
+    <div class="input-group">
+        <input list="choices" id="m-status"  placeholder="Status"       required />
+        <datalist id="choices">
+            <option value="Abandoned"></option>
+            <option value="Finished"></option>
+        </datalist>
+    </div>
     <div class="input-row">
         <div class="input-group">
             <input id="m-rating" placeholder="Rating (1–5)" required type="number" min="1" max="5" />

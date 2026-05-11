@@ -5,11 +5,13 @@ const submitBtn = document.getElementById("m-submit");
 
 submitBtn?.addEventListener("click", async () => {
     const book = {
+        id: crypto.randomUUID(),
         title: document.getElementById("m-title").value,
         author: document.getElementById("m-author").value,
         genre: document.getElementById("m-genre").value,
         rating: document.getElementById("m-rating").value,
-        numberOfPages: document.getElementById("m-pages").value
+        totalPages: parseInt(document.getElementById("m-pages").value, 10),
+        status: document.getElementById("m-status").value,
     }
 
     setContent("Calculating score...");
