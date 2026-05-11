@@ -50,33 +50,9 @@ async function handleBookDetected(book) {
             console.error('Error storing book data:', error);
         });
 
-    // Automatically add to history if it doesn't exist
-    await updateReadingHistory(book);
-
     const response = await sendBackendBookRequest(book)
 
     const {score, explanation} = response || {};
     console.log('Backend response:', score)
     return {score, explanation};
-}
-
-async function updateReadingHistory(book) {
-    return new Promise((resolve) => {
-        chrome.storage.local.get(['readingHistory'], (result) => {
-            let books = result.readingHistory || [];
-            const existingIndex = books.findIndex(b => b.id === book.id || (b.title === book.title && b.author === book.author));
-            
-            if (existingIndex === -1) {
-                books.push(book);
-                chrome.storage.local.set({ readingHistory: books }, () => {
-                    console.log('Book added to history');
-                    resolve();
-                });
-            } else {
-                // Update existing entry if needed (e.g. status)
-                // For now, we just resolve
-                resolve();
-            }
-        });
-    });
 }
