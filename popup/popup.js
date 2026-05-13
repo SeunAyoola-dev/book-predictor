@@ -15,16 +15,10 @@ submitBtn?.addEventListener("click", async () => {
 
     setContent("Adding book...");
     const response = await chrome.runtime.sendMessage({type: 'addManualBook', payload: book})
-    if (response) {
-        if (response.added) {
-            console.log("Book added successfully", response);
-            setContent("Book added successfully.");
-        }
-        else {
-            console.log("Book added not successfully");
-        }
-    } else{
-        console.log("Internal error")
+    if(response == true ){
+        setContent("Book has been added successfully.");
+    } else {
+        setContent("Failed to add book...");
     }
 })
 

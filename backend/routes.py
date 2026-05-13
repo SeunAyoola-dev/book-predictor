@@ -30,8 +30,7 @@ def add_book(payload: BookPayload, db: Session = Depends(get_db)):
             BookDB.author.ilike(book.author)
         )
     ).first()
-    print("book", book)
-    print("existing_book", existing_book)
+
     if not existing_book:
         db.add(BookDB(**book.model_dump()))
         db.commit()

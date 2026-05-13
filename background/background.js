@@ -13,8 +13,19 @@ async function handleAddManualBook(book) {
     console.log('Adding manual book:', book)
 
     const response = await sendBackendBookRequest(book);
-    const { score, explanation } = response || {};
-    return { score, explanation };
+    if(response){
+        console.log("response", response);
+        if(response.added) {
+            console.log("Book added successfully")
+            return true
+        }
+        else {
+            console.log("Failed to add book")
+            return false
+        }
+    } else{
+        return false
+    }
 }
 
 
@@ -44,6 +55,7 @@ async function sendBackendBookRequest(book) {
                 book,
             })
         })
+        return response.json()
     } catch (e){
         console.error('Failed to reach backend:', e)
         return null
@@ -52,16 +64,6 @@ async function sendBackendBookRequest(book) {
 
 async function handleBookDetected(book) {
     console.log('Book detected:', book)
-
-    // // store the latest detected book
-    // chrome.storage.local.set({ currentBook: book })
-    //     .then(() => {
-    //         console.log('Book data stored successfully');
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error storing book data:', error);
-    //     });
-
     const response = await sendBackendPredictionRequest(book)
 
     const {score, explanation} = response || {};
