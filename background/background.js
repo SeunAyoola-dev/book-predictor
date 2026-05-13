@@ -28,8 +28,6 @@ async function handleAddManualBook(book) {
     }
 }
 
-
-
 async function sendBackendPredictionRequest(book) {
     try {
         const response = await fetch('http://localhost:8080/prediction', {
