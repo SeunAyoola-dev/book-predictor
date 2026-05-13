@@ -12,23 +12,20 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function handleAddManualBook(book) {
     console.log('Adding manual book:', book)
 
-    await updateReadingHistory(book);
-
     const response = await sendBackendBookRequest(book);
     const { score, explanation } = response || {};
     return { score, explanation };
 }
 
-async function sendBackendBookRequest(book) {
+
+
+async function sendBackendPredictionRequest(book) {
     try {
-        const { readingHistory = []} =
-            await chrome.storage.local.get(['readingHistory'])
-        const response = await fetch('http://localhost:8080/book', {
+        const response = await fetch('http://localhost:8080/prediction', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 book,
-                readingHistory
             })
         })
         return response.json()
@@ -38,19 +35,34 @@ async function sendBackendBookRequest(book) {
     }
 }
 
+async function sendBackendBookRequest(book) {
+    try{
+        const response = await fetch('http://localhost:8080/book', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                book,
+            })
+        })
+    } catch (e){
+        console.error('Failed to reach backend:', e)
+        return null
+    }
+}
+
 async function handleBookDetected(book) {
     console.log('Book detected:', book)
 
-    // store the latest detected book
-    chrome.storage.local.set({ currentBook: book })
-        .then(() => {
-            console.log('Book data stored successfully');
-        })
-        .catch((error) => {
-            console.error('Error storing book data:', error);
-        });
+    // // store the latest detected book
+    // chrome.storage.local.set({ currentBook: book })
+    //     .then(() => {
+    //         console.log('Book data stored successfully');
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error storing book data:', error);
+    //     });
 
-    const response = await sendBackendBookRequest(book)
+    const response = await sendBackendPredictionRequest(book)
 
     const {score, explanation} = response || {};
     console.log('Backend response:', score)

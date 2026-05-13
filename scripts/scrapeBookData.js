@@ -35,14 +35,10 @@ function scrapeBookData(article) {
     const description = getText(article, "#bookDescription_feature_div .a-expander-content").replace(/\W/g, '')
 
     return {
-        id: crypto.randomUUID(),
         title,
         author,
         rating,
         totalPages: parsedNumberOfPages,
-        currentPage: 0,
-        status: "reading",
-        startTime: Date.now(),
         userRating: null,
         description
     }

@@ -5,7 +5,6 @@ const submitBtn = document.getElementById("m-submit");
 
 submitBtn?.addEventListener("click", async () => {
     const book = {
-        id: crypto.randomUUID(),
         title: document.getElementById("m-title").value,
         author: document.getElementById("m-author").value,
         genre: document.getElementById("m-genre").value,
@@ -14,12 +13,18 @@ submitBtn?.addEventListener("click", async () => {
         status: document.getElementById("m-status").value,
     }
 
-    setContent("Calculating score...");
+    setContent("Adding book...");
     const response = await chrome.runtime.sendMessage({type: 'addManualBook', payload: book})
-    if (response && response.score !== undefined) {
-        setContent(`Likelihood of Completion: ${response.score}%`)
-    } else {
-        setContent("Book added successfully.");
+    if (response) {
+        if (response.added) {
+            console.log("Book added successfully", response);
+            setContent("Book added successfully.");
+        }
+        else {
+            console.log("Book added not successfully");
+        }
+    } else{
+        console.log("Internal error")
     }
 })
 

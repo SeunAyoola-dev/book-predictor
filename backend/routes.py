@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from schemas import BookItem
@@ -13,23 +14,29 @@ router = APIRouter()
 
 class BookPayload(BaseModel):
     book: BookItem
-    readingHistory: List[BookItem]
+
+@router.post("/prediction")
+def return_prediction(payload: BookPayload):
+    book = payload.book
+    return predict(book)
 
 @router.post("/book")
-def return_prediction(payload: BookPayload, db: Session = Depends(get_db)):
-    book_data = payload.book
-
-    db_book = db.query(BookDB).filter(BookDB.id == book_data.id).first()
-    if not db_book:
-        db_book = BookDB(**book_data.model_dump())
-        db.add(db_book)
+def add_book(payload: BookPayload, db: Session = Depends(get_db)):
+    book = payload.book
+    added = False
+    existing_book = db.query(BookDB).filter(
+        and_(
+            BookDB.title.ilike(book.title),
+            BookDB.author.ilike(book.author)
+        )
+    ).first()
+    print("book", book)
+    print("existing_book", existing_book)
+    if not existing_book:
+        db.add(BookDB(**book.model_dump()))
         db.commit()
-    print("here")
-    print(f"LOG[INFO]: READING HISTORY IS {payload.readingHistory}")
-    for hist_item in payload.readingHistory:
-        existing = db.query(BookDB).filter(BookDB.id == hist_item.id).first()
-        if not existing:
-            db.add(BookDB(**hist_item.model_dump()))
-    db.commit()
+        added = True
 
-    return predict(book_data)
+    return {
+        "added": added
+    }
