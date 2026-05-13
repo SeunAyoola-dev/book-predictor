@@ -10,7 +10,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         }).then(response => {
             sendResponse(response);
         });
-
         return true;
     }
 });

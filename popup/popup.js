@@ -9,15 +9,16 @@ submitBtn?.addEventListener("click", async () => {
         author: document.getElementById("m-author").value,
         genre: document.getElementById("m-genre").value,
         rating: document.getElementById("m-rating").value,
-        numberOfPages: document.getElementById("m-pages").value
+        totalPages: parseInt(document.getElementById("m-pages").value, 10),
+        status: document.getElementById("m-status").value,
     }
 
-    setContent("Calculating score...");
+    setContent("Adding book...");
     const response = await chrome.runtime.sendMessage({type: 'addManualBook', payload: book})
-    if (response && response.score !== undefined) {
-        setContent(`Likelihood of Completion: ${response.score}%`)
+    if(response === true ){
+        setContent("Book has been added successfully.");
     } else {
-        setContent("Book added successfully.");
+        setContent("Failed to add book...");
     }
 })
 

@@ -34,5 +34,12 @@ function scrapeBookData(article) {
     const parsedNumberOfPages = parseNumberOfPages(numberOfPages)
     const description = getText(article, "#bookDescription_feature_div .a-expander-content").replace(/\W/g, '')
 
-    return {title, author, rating, parsedNumberOfPages, description}
+    return {
+        title,
+        author,
+        rating,
+        totalPages: parsedNumberOfPages,
+        userRating: null,
+        description
+    }
 }
